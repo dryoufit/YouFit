@@ -60,13 +60,17 @@
     position:sticky;top:0;z-index:60;
     display:flex;justify-content:space-between;align-items:center;
     padding:16px 20px;max-width:980px;margin:0 auto;
-    transition:background .25s ease, box-shadow .25s ease, padding .25s ease;
+    transition:padding .25s ease;
   }
-  .nav.scrolled{
-    background:rgba(12,19,14,.85);backdrop-filter:blur(8px);
-    box-shadow:0 6px 20px -12px rgba(0,0,0,.6);
-    padding:10px 20px;border-bottom:1px solid var(--line);
+  .nav::before{
+    content:"";position:fixed;top:0;left:0;right:0;height:0;z-index:-1;
+    background:rgba(12,19,14,.9);backdrop-filter:blur(8px);
+    border-bottom:1px solid transparent;
+    transition:height .25s ease, border-color .25s ease;
   }
+  .nav.scrolled{padding:10px 20px;}
+  .nav.scrolled::before{height:100%;border-color:var(--line);}
+  .nav.scrolled::before{height:64px;}
   .nav .brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px;}
   .nav .brand img{width:32px;height:32px;border-radius:50%;object-fit:cover;}
   .nav .brand span{color:var(--lime);}
@@ -96,6 +100,20 @@
   @media (max-width:640px){.pain-grid{grid-template-columns:1fr;}}
   .pain-item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;font-size:14px;line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
   .pain-item .x{color:#e0917a;flex:none;font-size:16px;}
+
+  .compare-table{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .compare-row{display:grid;grid-template-columns:1fr 1fr 1fr;}
+  .compare-row + .compare-row{border-top:1px solid var(--line);}
+  .compare-cell{padding:14px 12px;font-size:13px;line-height:1.6;}
+  .compare-cell.label{font-weight:700;color:var(--muted);font-size:12.5px;}
+  .compare-cell.other{color:var(--muted);}
+  .compare-cell.us{color:var(--lime);font-weight:700;}
+  .compare-header .compare-cell{font-weight:900;font-size:13px;padding-bottom:10px;}
+  .compare-header .other{color:var(--muted);}
+  .compare-header .us{color:var(--gold);}
+  @media (max-width:640px){
+    .compare-cell{font-size:12px;padding:12px 8px;}
+  }
 
   .duration-toggle{display:flex;justify-content:center;gap:8px;margin-bottom:30px;flex-wrap:wrap;}
   .duration-toggle button{
@@ -169,9 +187,9 @@
       <a class="btn-primary" href="https://forms.gle/nBMRA58Kn2BM8nSS9">ابدأ رحلتك الآن</a>
     </div>
     <div class="stats">
-      <div><b>٢٤س</b><span>أقصى وقت للرد</span></div>
-      <div><b>٢</b><span>باقات متابعة مرنة</span></div>
-      <div><b>+١٠٠</b><span>عميل بدأ رحلته</span></div>
+      <div><b class="count" data-target="24" data-suffix="س">٠</b><span>أقصى وقت للرد</span></div>
+      <div><b class="count" data-target="2">٠</b><span>باقات متابعة مرنة</span></div>
+      <div><b class="count" data-target="100" data-prefix="+">٠</b><span>عميل بدأ رحلته</span></div>
     </div>
   </div>
 
@@ -236,6 +254,38 @@
           <li><span class="tick">✓</span> تعديل فوري لأي ظرف طارئ</li>
         </ul>
         <a class="btn-gold" href="https://wa.me/201515449395?text=عايز اشترك في باقة Premium">اشترك في Premium</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="compare">
+    <h2 class="heading center">ليه YouFit؟</h2>
+    <p class="subheading center">الفرق بين المتابعة معانا وبين اللي معتاد عليه السوق.</p>
+    <div class="compare-table">
+      <div class="compare-row compare-header">
+        <div class="compare-cell label"></div>
+        <div class="compare-cell other">الطريقة التقليدية</div>
+        <div class="compare-cell us">YouFit</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">سرعة الرد</div>
+        <div class="compare-cell other">بعد يوم أو يومين</div>
+        <div class="compare-cell us">خلال ٢٤ ساعة، وفوري في Premium</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">الخطة</div>
+        <div class="compare-cell other">قالب عام لكل العملاء</div>
+        <div class="compare-cell us">مبنية على بياناتك وهدفك انت</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">حالتك الصحية</div>
+        <div class="compare-cell other">مش بتتراعى غالبًا</div>
+        <div class="compare-cell us">مراجعة طبية من صيدلي إكلينيكي</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell label">مين بيرد عليك</div>
+        <div class="compare-cell other">فريق دعم عام</div>
+        <div class="compare-cell us">د. يوسف شخصيًا (Premium)</div>
       </div>
     </div>
   </section>
@@ -324,6 +374,39 @@
     el.classList.add('reveal');
     io.observe(el);
   });
+
+  var navEl = document.querySelector('.nav');
+  window.addEventListener('scroll', function(){
+    if(window.scrollY > 12){ navEl.classList.add('scrolled'); }
+    else{ navEl.classList.remove('scrolled'); }
+  });
+
+  function animateCount(el){
+    var target = parseInt(el.getAttribute('data-target'), 10);
+    var prefix = el.getAttribute('data-prefix') || '';
+    var suffix = el.getAttribute('data-suffix') || '';
+    var duration = 1200;
+    var start = null;
+    function toArabicDigits(n){
+      return String(n).replace(/[0-9]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'[d]; });
+    }
+    function step(ts){
+      if(!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var value = Math.floor(progress * target);
+      el.textContent = prefix + toArabicDigits(value) + suffix;
+      if(progress < 1){ requestAnimationFrame(step); }
+      else{ el.textContent = prefix + toArabicDigits(target) + suffix; }
+    }
+    requestAnimationFrame(step);
+  }
+  var countEls = document.querySelectorAll('.count');
+  var countIo = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ animateCount(e.target); countIo.unobserve(e.target); }
+    });
+  }, {threshold:.5});
+  countEls.forEach(function(el){ countIo.observe(el); });
 </script>
 </body>
 </html>
